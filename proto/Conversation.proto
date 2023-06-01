@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package conversation;
+
+option go_package = "proto/conversation";
+
+service ConversationService {
+  rpc StartConversation(stream ConversationMessage) returns (stream ConversationMessage);
+}
+
+message ConversationMessage {
+  string text = 1;
+}

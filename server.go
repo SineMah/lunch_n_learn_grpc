@@ -12,12 +12,14 @@ import (
 
 	"google.golang.org/grpc"
 	pbAverage "mincedmind.com/grpc/proto/average"
+	pbConversation "mincedmind.com/grpc/proto/conversation"
 	pbCount "mincedmind.com/grpc/proto/count"
 	pbHello "mincedmind.com/grpc/proto/hello"
 )
 
 type server struct {
 	pbAverage.UnimplementedAverageServiceServer
+	pbConversation.UnimplementedConversationServiceServer
 	pbCount.UnimplementedCounterServer
 	pbHello.UnimplementedGreeterServer
 }
@@ -67,6 +69,26 @@ func (*server) CalculateAverage(stream pbAverage.AverageService_CalculateAverage
 	}
 }
 
+func (s *server) StartConversation(stream pbConversation.ConversationService_StartConversationServer) error {
+	for {
+		req, err := stream.Recv()
+		if err != nil {
+			return err
+		}
+
+		// Handle received message
+		log.Printf("Received message: %s", req.Text)
+
+		// Prepare and send response
+		resp := &pbConversation.ConversationMessage{
+			Text: "Received your message: " + req.Text,
+		}
+		if err := stream.Send(resp); err != nil {
+			return err
+		}
+	}
+}
+
 func main() {
 	lis, err := net.Listen("tcp", ":50051")
 	if err != nil {
@@ -75,6 +97,7 @@ func main() {
 
 	s := grpc.NewServer()
 	pbAverage.RegisterAverageServiceServer(s, &server{})
+	pbConversation.RegisterConversationServiceServer(s, &server{})
 	pbCount.RegisterCounterServer(s, &server{})
 	pbHello.RegisterGreeterServer(s, &server{})
 

@@ -6,6 +6,7 @@ package main
 import (
 	"fmt"
 	"mincedmind.com/grpc/commands/average"
+	"mincedmind.com/grpc/commands/conversation"
 	"mincedmind.com/grpc/commands/hello"
 	count "mincedmind.com/grpc/commands/stream"
 	"os"
@@ -27,6 +28,8 @@ func handleCommandValue(value string, args []string) {
 	switch value {
 	case "hello":
 		hello.Do(args)
+	case "talk":
+		conversation.Do()
 	case "count":
 		count.Do(args)
 	case "avg":
