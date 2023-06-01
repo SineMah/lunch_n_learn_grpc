@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package count;
+
+option go_package = "proto/count";
+
+service Counter {
+  rpc StreamData(StreamDataRequest) returns (stream StreamDataResponse);
+}
+
+message StreamDataRequest {
+  string data = 1;
+}
+
+message StreamDataResponse {
+  string result = 1;
+}
